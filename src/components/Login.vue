@@ -58,21 +58,49 @@ export default {
             this.$refs.loginFormRef.resetFields();
         },
         login(){
-            // 1. 验证校验规则
+            // 1. 验证校验规则 通过$refs找到loginFormRef 获取到表单校验结果valid进行判断
             this.$refs.loginFormRef.validate(async valid =>{
                 // 验证失败
                 if(!valid) return;
                 // 验证成功 访问后台进行数据库校验
-                const {data: res} = await this.$http.post("login", this.loginForm);
-                
-                if(res.flag == "ok"){ // 登录成功的信息提示 并进行页面路由跳转
+                this.$ajax.post('/login', this.loginForm).then((res) => {
+                    console.log(res);
+                    if (!res.data.flag) return this.$message.error(res.data.message);
+                    const token = res.data.data.tokenHead + res.data.data.token;
+                    sessionStorage.setItem('token', token);
+                    //获取用户信息
+                    this.$ajax.get('/getUserInfo').then((res) => {
+                        console.log('获取用户信息', res.data.data);
+                        const tokenBody = res.data.data;
+                        let token = tokenBody.token;
+                        let tokenHead = tokenBody.tokenHead;
+                        
+                        //将用户信息存入本地
+                        this.$store.commit('setId', user.id);
+                        this.$store.commit('setUserName', user.username);
+                        this.$store.commit('setToken', tokenHead + token);
+                        //获取权限信息
+                        this.$store.commit('setRoles', user.authorities);
+                        this.$store.commit('setPremission', user.premission);
+                    });
+                    //登录成功 页面跳转
                     this.$message.success("登录成功");
-                    // session中存放相关信息
-                    window.sessionStorage.setItem("user", JSON.stringify(res.user));
-                    this.$router.push({path:"/home"});
-                }else{ // 登录失败的信息提示
-                    this.$message.error("登录失败");
-                }
+                    this.$router.push({ path: '/home' });
+                }).catch((err) => {
+                    if(err.message === 'Network Error') {
+                        this.$message.warning('网络错误，请稍后尝试！');
+                    }
+                });
+                // const {data: res} = await this.$http.post("login", this.loginForm);
+                
+                // if(res.flag == true){ // 登录成功的信息提示 并进行页面路由跳转
+                //     this.$message.success("登录成功");
+                //     // session中存放相关信息
+                //     window.sessionStorage.setItem("user", JSON.stringify(res.user));
+                //     this.$router.push({path:"/home"});
+                // }else{ // 登录失败的信息提示
+                //     this.$message.error("登录失败");
+                // }
             })
         },
     },
@@ -80,6 +108,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+// scope为受保护的样式 当前style标签下的样式只在当前组件生效 其他组件无法使用 避免样式污染
 // 根节点样式
 .login_container{
     background-color: #2b4b6b;

@@ -8,6 +8,8 @@ import UserList from '../components/admin/UserList.vue'
 import UserRight from '../components/admin/UserRight.vue'
 import FoodCalories from '../components/food/FoodCalories.vue'
 import GoodList from '../components/admin/GoodList.vue'
+import store from '@/store'
+import ajax from '@/plugins/ajax'
 
 
 Vue.use(VueRouter)
@@ -52,9 +54,21 @@ router.beforeEach((to, from, next)=>{ //全局前置守卫
   // next: 函数(可选) next(url) 重定向到url上 next() 放行 继续访问to
   if(to.path=='/login') return next();
   // 获取user 
-  const userFlag = window.sessionStorage.getItem("user"); //取出当前用户
-  if(!userFlag) return next('/login'); //为空 则返回登陆页面 否则有可能看到前一个登出用户的内容
-  next(); //符合要求 
+  const token = window.sessionStorage.getItem("token"); //取出当前用户
+  if(!token) return next('/login'); //token为空 则返回登陆页面 否则有可能看到前一个登出用户的内容
+  
+  if(!store.state.roles || store.state.roles.length < 1) {
+    // 向后端发送请求 获取用户的基本信息
+    ajax.get('/getUserInfo').then((res) => {
+      console.log('用户基本信息', res);
+    });
+  }
+  if(to.path == '/login'){
+    return next('/home'); // 如果已经登陆 则不访问login页面 访问主页面
+  }else{
+    next(); //符合要求
+  }
+  
   // 确保 next 在任何给定的导航守卫中都被严格调用一次。
 })
 

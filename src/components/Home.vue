@@ -61,7 +61,6 @@ export default {
                 '201': 'iconfont icon-shu',
                 '202': 'iconfont icon-qialuli',
                 '203': 'iconfont icon-shiwu',
-                '204': 'iconfont icon-denglu',
             },
             activePath: '/welcome', // 默认路径
         }
