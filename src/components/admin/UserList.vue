@@ -3,7 +3,7 @@
         <!-- 面包屑导航 -->
         <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(item, index) in $router.currentRoute.matched" :key="index">{{ item.meta.title }}</el-breadcrumb-item>
         </el-breadcrumb>
         <!-- 用户列表主体 -->
         <el-card>
@@ -179,9 +179,9 @@ export default {
     methods:{
         async getUserList(){
             // 获取所有用户
-           const {data:res} = await this.$http.get("allUser", {params: this.queryInfo})
-           this.userList = res.data; // 用户列表数据封装
-           this.total = res.numbers; // 总用户数封装
+           const {data:res} = await this.$ajax.get("/user/allUser", {params: this.queryInfo})
+           this.userList =  res.data.rows; // 用户列表数据封装
+           this.total = res.data.total; // 总用户数封装
         },
         searchUserList(){
             this.queryInfo.pageStart = 1; 
@@ -200,8 +200,9 @@ export default {
         },
         // 修改用户状态
         async userStateChanged(userInfo){
-            const {data:res} = await this.$http.put(`userState?id=${userInfo.id}&state=${userInfo.state}`); //提交
-            if(res != "success"){
+            const {data:res} = await this.$ajax.put(`/user/userState?id=${userInfo.id}&state=${userInfo.state}`); //提交
+            console.log('返回数据', res);
+            if(!res.flag){
                 userInfo.id = !userInfo.id;
                 return this.$message.error("操作失败");
             }
@@ -214,8 +215,8 @@ export default {
         addUser(){
             this.$refs.addFormRef.validate(async valid=>{
                 if(!valid) return;
-                const {data:res} = await this.$http.post('addUser', this.addForm);
-                if(res != "success"){
+                const {data:res} = await this.$ajax.post('/user/addUser', this.addForm);
+                if(!res.flag){
                     return this.$message.error("操作失败");
                 }
                 this.$message.success("操作成功");
@@ -233,8 +234,8 @@ export default {
             if(confirmResult != "confirm"){
                 return this.$message.info("已取消删除");
             }
-            const {data:res} = await this.$http.delete("deleteUser?id="+id);
-            if(res != "success"){
+            const {data:res} = await this.$ajax.delete("/user/deleteUser?id="+id);
+            if(!res.flag){
                 return this.$message.error("删除失败");
             }
             this.$message.success("删除成功");
@@ -242,8 +243,8 @@ export default {
         },
         // 显示修改对话框
         async showEditDialog(id){
-            const {data:res} = await this.$http.get("getUpdate?id="+id); //根据主键获取用户信息
-            this.editForm = res; // 将查询出来的用户信息反填在表单中
+            const {data:res} = await this.$ajax.get("/user/getUpdate?id="+id); //根据主键获取用户信息
+            this.editForm = res.data; // 将查询出来的用户信息反填在表单中
             this.editDialogVisible = true; // 开启编辑对话框
         },
         // 关闭对话框
@@ -257,19 +258,19 @@ export default {
                     return this.$message.error("请填写有效信息");
                 }
                 // 发起修改请求
-                const {data:res} = await this.$http.put("updateUser", this.editForm);
-                if(res != "success"){
-                    return this.$message.error("操作失败");
+                const {data:res} = await this.$ajax.put("/user/updateUser", this.editForm);
+                if(!res.flag){
+                    return this.$message.error(res.message);
                 }
-                this.$message.success("操作成功");
+                this.$message.success(res.message);
                 this.editDialogVisible = false; //隐藏修改对话框
                 this.getUserList();
             });
         },
         async showEditRoleDialog(id){
-            const {data:res} = await this.$http.get("getUpdate?id="+id); //根据主键获取用户信息
-            this.editRoleForm.role = res.role;
-            this.editRoleForm.id = res.id;
+            const {data:res} = await this.$ajax.get("/user/getUpdate?id="+id); //根据主键获取用户信息
+            this.editRoleForm.role = res.data.role;
+            this.editRoleForm.id = res.data.id;
             console.log(this.editRoleForm);
             this.editRoleDialogVisible = true;
         },
@@ -277,12 +278,12 @@ export default {
             this.$refs.editRoleFormRef.resetFields();
         },
         async editRole(){
-            const {data:res} = await this.$http.put("updateRole", this.editRoleForm);
+            const {data:res} = await this.$ajax.put("/user/updateRole", this.editRoleForm);
             console.log(res);
-            if(res != "success"){
-                return this.$message.error("修改失败");
+            if(!res.flag){
+                return this.$message.error(res.message);
             }
-            this.$message.success("修改成功");
+            this.$message.success(res.message);
             this.getUserList();
         },
     }

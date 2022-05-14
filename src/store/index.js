@@ -9,10 +9,10 @@ export default new Vuex.Store({
         token: sessionStorage.getItem('token'),
         //如果初始化没有则赋值为空
         id: sessionStorage.getItem('id') || '1',
-        userName: sessionStorage.getItem('name') || '',
-        menus: JSON.parse(sessionStorage.getItem('menus') || '[]'),
-        roles: JSON.parse(sessionStorage.getItem('roles') || '[]'),
-        premissions: JSON.parse(sessionStorage.getItem('permissions') || '[]'),
+        name: sessionStorage.getItem('name') || '',
+        role: sessionStorage.getItem('role') || '',
+        menus: [],
+        permissions: [],
     },
     //同步执行
     mutations: {
@@ -26,21 +26,19 @@ export default new Vuex.Store({
             sessionStorage.setItem('id', data);
         },
         //用户名
-        setUserName(state, data) {
+        setName(state, data) {
             state.userName = data;
             sessionStorage.setItem('name', data);
         },
+        setRole(state, data) {
+            state.role = data;
+            sessionStorage.setItem('role', data);
+        },
         setMenus(state, data) {
             state.menus = data;
-            sessionStorage.setItem('menus', JSON.stringify(data));
         },
-        setRoles(state, data) {
-            state.roles = data;
-            sessionStorage.setItem('roles', JSON.stringify(data));
-        },
-        setPremission(state, data) {
-            state.premissions = data;
-            sessionStorage.setItem('permissions', JSON.stringify(data));
+        setPermissions(state, data) {
+            state.permissions = data;
         },
     },
     //异步执行

@@ -66,22 +66,22 @@ export default {
                 this.$ajax.post('/login', this.loginForm).then((res) => {
                     console.log(res);
                     if (!res.data.flag) return this.$message.error(res.data.message);
-                    const token = res.data.data.tokenHead + res.data.data.token;
-                    sessionStorage.setItem('token', token);
+                    const tokenBody = res.data.data;
+                    let token = tokenBody.token;
+                    let tokenHead = tokenBody.tokenHead;
+                    sessionStorage.setItem('token', tokenHead + token);
                     //获取用户信息
                     this.$ajax.get('/getUserInfo').then((res) => {
-                        console.log('获取用户信息', res.data.data);
-                        const tokenBody = res.data.data;
-                        let token = tokenBody.token;
-                        let tokenHead = tokenBody.tokenHead;
+                        // console.log('获取用户信息', res.data.data);
                         
+                        let user = res.data.data;
                         //将用户信息存入本地
                         this.$store.commit('setId', user.id);
-                        this.$store.commit('setUserName', user.username);
-                        this.$store.commit('setToken', tokenHead + token);
+                        this.$store.commit('setName', user.username);
                         //获取权限信息
-                        this.$store.commit('setRoles', user.authorities);
-                        this.$store.commit('setPremission', user.premission);
+                        this.$store.commit('setRole', user.role);
+                        this.$store.commit('setMenus', user.roleList[0].menus);
+                        this.$store.commit('setPermissions', user.roleList[0].permissions);
                     });
                     //登录成功 页面跳转
                     this.$message.success("登录成功");

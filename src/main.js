@@ -14,7 +14,7 @@ import './assets/font/iconfont.css'
 import axios from 'axios'
 // 挂载axios
 Vue.prototype.$http = axios 
-Vue.prototype.$ajax = axios
+// Vue.prototype.$ajax = axios
 // 设置后端访问根路径
 // axios.defaults.baseURL = "http://localhost:9000"
 

@@ -3,7 +3,7 @@
         <!-- 面包屑导航 -->
         <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>商品列表</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(item, index) in $router.currentRoute.matched" :key="index">{{ item.meta.title }}</el-breadcrumb-item>
         </el-breadcrumb>
         <!-- 商品列表主体 -->
         <el-card>
@@ -141,7 +141,7 @@ export default {
                 goodName: '',
                 price: 0,
                 inStock: 0,
-                createUserId: JSON.parse(window.sessionStorage.getItem("user")).id,
+                createUserId: JSON.parse(window.sessionStorage.getItem("id")),
                 imgUrl: '',
                 modelType: '',
                 controlModel: '',
@@ -214,9 +214,9 @@ export default {
     methods:{
         async getGoodList(){
             // 获取所有商品
-           const {data:res} = await this.$http.get("allGoods", {params: this.queryInfo})
-           this.goodList = res.data; // 用户列表数据封装
-           this.total = res.numbers; // 总用户数封装
+           const {data:res} = await this.$ajax.get("/goods/allGoods", {params: this.queryInfo})
+           this.goodList = res.data.rows; // 用户列表数据封装
+           this.total = res.data.total; // 总用户数封装
         },
         searchGoodList(){
             this.queryInfo.pageStart = 1; 
@@ -243,11 +243,11 @@ export default {
                 if(!valid){
                     return this.$message.error("请输入有效信息");
                 }
-                const {data:res} = await this.$http.post("addGoods", this.goodForm);
-                if(res != "success"){
-                    return this.$message.error("操作失败");
+                const {data:res} = await this.$ajax.post("/goods/addGoods", this.goodForm);
+                if(!res.flag){
+                    return this.$message.error(res.message);
                 }
-                this.$message.success("操作成功");
+                this.$message.success(res.message);
                 this.dialogVisible = false;
                 this.getGoodList();
             });
@@ -257,11 +257,11 @@ export default {
                 if(!valid){
                     return this.$message.error("请输入有效信息");
                 }
-                const {data:res} = await this.$http.put("updateGood", this.goodForm);
-                if(res != "success"){
-                    return this.$message.error("操作失败");
+                const {data:res} = await this.$ajax.put("/goods/updateGood", this.goodForm);
+                if(!res.flag){
+                    return this.$message.error(res.message);
                 }
-                this.$message.success("操作成功");
+                this.$message.success(res.message);
                 this.dialogVisible = false;
                 this.getGoodList();
             });
@@ -278,8 +278,8 @@ export default {
             // @click="showEditDialog(scope.row.id)" 点击修改按钮 查询相关信息 并设置hasId
             // 查询出商品的信息 反填在表单中
             // 增加和修改使用同一个表单
-            const {data:res} = await this.$http.get("getGood?id="+id);
-            this.goodForm = res;
+            const {data:res} = await this.$ajax.get("/goods/getGood?id="+id);
+            this.goodForm = res.data;
             this.goodForm.id = id; //设置id 表示当前操作为 修改
             this.hasId = id;
             this.dialogVisible = true;
@@ -294,11 +294,11 @@ export default {
             if(confirmResult != "confirm"){
                 return this.$message.info("已取消删除");
             }
-            const {data:res} = await this.$http.delete("deleteGood?id="+id);
-            if(res != "success"){
-                return this.$message.error("删除失败");
+            const {data:res} = await this.$ajax.delete("/goods/deleteGood?id="+id);
+            if(!res.flag){
+                return this.$message.error(res.message);
             }
-            this.$message.success("删除成功");
+            this.$message.success(res.message);
             this.getGoodList();
         },
     },

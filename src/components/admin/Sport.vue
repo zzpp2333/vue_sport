@@ -1,5 +1,5 @@
 <template>
-    <div> 权限管理
+    <div>运动模块
         <!-- 面包屑导航 -->
         <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
@@ -14,7 +14,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .el-breadcrumb{
     margin-bottom: 15px;
     font-size: 17px;

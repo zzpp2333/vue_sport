@@ -5,7 +5,7 @@
         <el-header>
             <div>
                 <img src="../assets/logo.jpg" alt />
-                <span>个人运动平台</span>
+                <span>个人运动平台--({{name}})</span>
             </div>
             <el-button type="info" @click="logout">安全退出</el-button>
         </el-header>
@@ -20,16 +20,18 @@
                 unique-opened :collapse="isCollapse" :collapse-transition="false" :router="true"
                 :default-active="activePath">
                     <!-- 一级菜单 主菜单以及次菜单在easyproject数据库的mainmenu submenu中 -->
-                    <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
+                    <el-submenu :index="parentMenu.path" v-for="(parentMenu, index) in menus" :key="index">
                         <template slot="title">
-                            <i :class="iconsObject[item.id]"></i>
-                            <span>{{item.title}}</span>
+                            <!-- iconsObject[parentMenu.id] -->
+                            <i :class="parentMenu.icon"></i> 
+                            <span>{{parentMenu.title}}</span>
                         </template>
                         <!-- 二级菜单 -->
-                        <el-menu-item :index="itm.path" v-for="itm in item.subList" :key="itm.id" @click="saveNavState(itm.path)">
+                        <el-menu-item :index="childrenMenu.path" v-for="(childrenMenu, i) in parentMenu.subList" :key="i" @click="saveNavState(childrenMenu.path)">
                             <template slot="title">
-                                <i :class="iconsObject[itm.id]"></i>
-                                <span>{{itm.title}}</span>
+                                <!-- iconsObject[childrenMenu.id] -->
+                                <i :class="childrenMenu.icon"></i>
+                                <span>{{childrenMenu.title}}</span>
                             </template>
                         </el-menu-item>
                     </el-submenu>
@@ -44,11 +46,16 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
+    //计算属性
+    computed: {
+        // 引入计算属性
+        ...mapState(['name', 'menus', 'role'])
+    },
     data(){
         return {
-            // 菜单列表
-            menuList: [],
+            // menuList: [],
             // 控制伸缩
             isCollapse: false,
             iconsObject:{
@@ -67,7 +74,8 @@ export default {
     },
     // onload事件 页面一加载 就在数据库中查询mainmenu和submenu
     created(){
-        this.getMenuList();
+        // this.getMenuList();
+        console.log('menus', this.menus);  // 计算属性 用this.menus获取
         // 取出保存的activePath
         this.activePath = window.sessionStorage.getItem("activePath"); 
     },
@@ -75,17 +83,27 @@ export default {
         
         logout(){
             // 清除session
-            window.sessionStorage.clear();
-            // 回到首页/登录页
-            this.$router.push("/login");
+            this.$confirm('您将退出系统, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$ajax.get('/logout').then((res) => {
+                    console.log(res);
+                    window.sessionStorage.clear();
+                    // 回到首页/登录页
+                    this.$router.replace("/login");
+                    this.$message.success(res.data.message);
+                });
+            }).catch(() => {});
         },
         // 获取导航菜单列表
-        async getMenuList(){
-            const {data: res} = await this.$http.get("menus");
-            console.log(res);
-            if(res.flag != 200) return this.$message.error("获取列表失败");
-            this.menuList = res.menus; // 数据回填至menuList
-        },
+        // async getMenuList(){
+        //     const {data: res} = await this.$http.get("menus");
+        //     console.log(res);
+        //     if(res.flag != 200) return this.$message.error("获取列表失败");
+        //     this.menuList = res.menus; // 数据回填至menuList
+        // },
         toggleCollapse(){
             this.isCollapse = !this.isCollapse;
         },

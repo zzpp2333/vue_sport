@@ -10,7 +10,7 @@ import FoodCalories from '../components/food/FoodCalories.vue'
 import GoodList from '../components/admin/GoodList.vue'
 import store from '@/store'
 import ajax from '@/plugins/ajax'
-
+import { formatMenu } from '@/utils/menu'
 
 Vue.use(VueRouter)
 
@@ -26,14 +26,14 @@ const routes = [
   {
     path: "/home",
     component: Home,
-    redirect: "/welcome",  //home页面重定向到子组件welcome
-    children: [
-      {path:"/welcome", component: Welcome,},
-      {path:"/user", component: UserList,},
-      {path:"/rights", component: UserRight,},
-      {path: "/goods", component: GoodList,},
-      {path:"/calories", component: FoodCalories,},
-    ]
+    // redirect: "/welcome",  //home页面重定向到子组件welcome
+    // children: [
+    //   {path:"/welcome", component: Welcome,},
+    //   {path:"/user", component: UserList,},
+    //   {path:"/rights", component: UserRight,},
+    //   {path: "/goods", component: GoodList,},
+    //   {path:"/calories", component: FoodCalories,},
+    // ]
   }
 ]
 
@@ -57,12 +57,25 @@ router.beforeEach((to, from, next)=>{ //全局前置守卫
   const token = window.sessionStorage.getItem("token"); //取出当前用户
   if(!token) return next('/login'); //token为空 则返回登陆页面 否则有可能看到前一个登出用户的内容
   
-  if(!store.state.roles || store.state.roles.length < 1) {
+  // if(!store.state.roles || store.state.roles.length < 1) { // 判断vuex中是否存在用户基本信息
     // 向后端发送请求 获取用户的基本信息
-    ajax.get('/getUserInfo').then((res) => {
-      console.log('用户基本信息', res);
-    });
-  }
+  ajax.get('/getUserInfo').then((res) => {
+    console.log('用户基本信息', res);
+    const user = res.data.data;
+    store.commit('setName', user.username);
+    store.commit('setId', user.id);
+    store.commit('setRole', user.role);
+    if(user.roleList.length > 0){
+      //添加角色 菜单 权限等信息
+      const menuList = formatMenu(user.roleList[0].menus);
+      console.log('menuList', menuList)
+      router.addRoutes(menuList);
+      console.log(router);
+      store.commit('setMenus', menuList);
+      store.commit('setPermissions', user.roleList[0].permissions);
+    }
+  });
+  // }
   if(to.path == '/login'){
     return next('/home'); // 如果已经登陆 则不访问login页面 访问主页面
   }else{
