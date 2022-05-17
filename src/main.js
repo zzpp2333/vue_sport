@@ -2,13 +2,15 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 //引入store
-import store from './store'
+import store from '@/store'
 import './plugins/element.js'
 import './plugins/ajax.js'
 // 添加全局样式
 import './assets/css/global.css'
 // 引入iconfont
 import './assets/font/iconfont.css'
+// 引入自定义指令
+import '@/utils/permission'
 
 // 导入axios 使用axios进行跨域
 import axios from 'axios'

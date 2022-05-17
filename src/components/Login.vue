@@ -80,6 +80,7 @@ export default {
                         this.$store.commit('setName', user.username);
                         //获取权限信息
                         this.$store.commit('setRole', user.role);
+                        this.$store.commit('setRoleList', user.roleList);
                         this.$store.commit('setMenus', user.roleList[0].menus);
                         this.$store.commit('setPermissions', user.roleList[0].permissions);
                     });

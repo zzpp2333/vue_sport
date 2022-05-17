@@ -11,6 +11,7 @@ export default new Vuex.Store({
         id: sessionStorage.getItem('id') || '1',
         name: sessionStorage.getItem('name') || '',
         role: sessionStorage.getItem('role') || '',
+        roleList: JSON.parse(sessionStorage.getItem('roleList') || '[]'),
         menus: [],
         permissions: [],
     },
@@ -27,12 +28,16 @@ export default new Vuex.Store({
         },
         //用户名
         setName(state, data) {
-            state.userName = data;
+            state.name = data;
             sessionStorage.setItem('name', data);
         },
         setRole(state, data) {
             state.role = data;
             sessionStorage.setItem('role', data);
+        },
+        setRoleList(state, data){
+            state.roleList = data;
+            sessionStorage.setItem('roleList', JSON.stringify(data));
         },
         setMenus(state, data) {
             state.menus = data;

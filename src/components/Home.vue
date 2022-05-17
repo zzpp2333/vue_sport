@@ -58,24 +58,24 @@ export default {
             // menuList: [],
             // 控制伸缩
             isCollapse: false,
-            iconsObject:{
-                '100': 'iconfont icon-guanliyuan',
-                '200': 'iconfont icon-shouye',
-                '101': 'iconfont icon-denglu',
-                '102': 'iconfont icon-mima',
-                '103': 'iconfont icon-shouye',
-                '104': 'iconfont icon-shangpin',
-                '201': 'iconfont icon-shu',
-                '202': 'iconfont icon-qialuli',
-                '203': 'iconfont icon-shiwu',
-            },
+            // iconsObject:{
+            //     '100': 'iconfont icon-guanliyuan',
+            //     '200': 'iconfont icon-shouye',
+            //     '101': 'iconfont icon-denglu',
+            //     '102': 'iconfont icon-mima',
+            //     '103': 'iconfont icon-shouye',
+            //     '104': 'iconfont icon-shangpin',
+            //     '201': 'iconfont icon-shu',
+            //     '202': 'iconfont icon-qialuli',
+            //     '203': 'iconfont icon-shiwu',
+            // },
             activePath: '/welcome', // 默认路径
         }
     },
     // onload事件 页面一加载 就在数据库中查询mainmenu和submenu
     created(){
         // this.getMenuList();
-        console.log('menus', this.menus);  // 计算属性 用this.menus获取
+        // console.log('menus', this.menus);  // 计算属性 用this.menus获取
         // 取出保存的activePath
         this.activePath = window.sessionStorage.getItem("activePath"); 
     },

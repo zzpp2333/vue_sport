@@ -11,12 +11,12 @@
             <el-row :gutter="25">
                 <el-col :span="10">
                 <!-- 搜索 & 添加 -->
-                    <el-input placeholder="请输入搜索内容" v-model="queryInfo.query" clearable @clear="getGoodList()">
+                    <el-input placeholder="请输入搜索内容" v-hasPermission="['GOODS_QUERY']" v-model="queryInfo.query" clearable @clear="getGoodList()">
                         <el-button slot="append" icon="el-icon-search" @click="searchGoodList()" @keyup.native.enter="searchGoodList()"></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary" @click="dialogVisible = true">添加商品</el-button>
+                    <el-button type="primary" v-hasPermission="['GOODS_ADD']" @click="showAddDialog">添加商品</el-button>
                 </el-col>
             </el-row>
             <!-- 商品列表 border边框 stripe隔行变色-->
@@ -41,9 +41,9 @@
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <!-- 修改 -->
-                        <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.id)"></el-button>
+                        <el-button type="primary" icon="el-icon-edit" size="mini" v-hasPermission="['GOODS_UPDATE']" @click="showEditDialog(scope.row)"></el-button>
                         <!-- 删除 -->
-                        <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteGood(scope.row.id)"></el-button>
+                        <el-button type="danger" icon="el-icon-delete" size="mini" v-hasPermission="['GOODS_DELETE']" @click="deleteGood(scope.row.id)"></el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -61,7 +61,7 @@
             </div>
         </el-card>
         <!-- 新增商品区域 -->
-        <el-dialog title="添加商品" :visible.sync="dialogVisible" width="50%" @close="dialogClose()">
+        <el-dialog :title="title" :visible.sync="dialogVisible" width="50%" @close="dialogClose()">
             <el-form :model="goodForm" :rules="goodFormRules" ref="goodFormRef" label-width="70px">
                 <el-form-item label="商品名" prop="goodName">
                     <el-input v-model="goodForm.goodName"></el-input>
@@ -117,7 +117,13 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
+    //计算属性
+    computed: {
+        // 引入计算属性
+        ...mapState(['id'])
+    },
     created(){
         console.log(this.goodForm);
         this.getGoodList();
@@ -134,14 +140,14 @@ export default {
             total: 0, // 总记录数 初始为0
             // 表单信息
             dialogVisible: false, // 对话框 隐藏/显示 状态 点击新增/修改设为true 关闭对话框设为false
-            hasId: "", //用于区分 新增/修改 新增无id 修改有id
+            title: "", 
             // 添加商品的信息
             goodForm: {
                 id: '',
                 goodName: '',
                 price: 0,
                 inStock: 0,
-                createUserId: JSON.parse(window.sessionStorage.getItem("id")),
+                createUserId: sessionStorage.getItem('id'),
                 imgUrl: '',
                 modelType: '',
                 controlModel: '',
@@ -215,8 +221,8 @@ export default {
         async getGoodList(){
             // 获取所有商品
            const {data:res} = await this.$ajax.get("/goods/allGoods", {params: this.queryInfo})
-           this.goodList = res.data.rows; // 用户列表数据封装
-           this.total = res.data.total; // 总用户数封装
+           this.goodList = res.rows; // 用户列表数据封装
+           this.total = res.total; // 总用户数封装
         },
         searchGoodList(){
             this.queryInfo.pageStart = 1; 
@@ -234,9 +240,8 @@ export default {
             this.getGoodList();
         },
         dialogClose(){
-            // @close="dialogClose" 关闭对话框时清空表单 并将hasId重置
+            // @close="dialogClose" 关闭对话框时清空表单
             this.$refs.goodFormRef.resetFields();
-            this.hasId = "";
         },
         addGoods(){
             this.$refs.goodFormRef.validate(async valid => {
@@ -268,20 +273,25 @@ export default {
         },
         dialogVisibleConfirm(){
             // 新增/修改 共用一个确定 使用id区别 @click="dialogVisibleConfirm" 点击确定执行相应的操作
-            if(!this.hasId){
+            if(this.goodForm.id === null || this.goodForm.id === undefined){
                 this.addGoods();
             }else{
                 this.editGood();
             }
         },
-        async showEditDialog(id){
-            // @click="showEditDialog(scope.row.id)" 点击修改按钮 查询相关信息 并设置hasId
+        showAddDialog(){
+            this.title = '添加商品';
+            this.goodForm = {};
+            this.goodForm.createUserId = this.id;
+            this.dialogVisible = true;
+        },
+        showEditDialog(row){
+            // @click="showEditDialog(scope.row)" 点击修改按钮 查询相关信息
             // 查询出商品的信息 反填在表单中
             // 增加和修改使用同一个表单
-            const {data:res} = await this.$ajax.get("/goods/getGood?id="+id);
-            this.goodForm = res.data;
-            this.goodForm.id = id; //设置id 表示当前操作为 修改
-            this.hasId = id;
+            // const {data:res} = await this.$ajax.get("/goods/getGood?id="+id);
+            this.title = '编辑商品信息';
+            this.goodForm = row;
             this.dialogVisible = true;
         },
         async deleteGood(id){
@@ -306,8 +316,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-breadcrumb{
-    margin-bottom: 15px;
-    font-size: 17px;
-}
+
 </style>

@@ -68,10 +68,9 @@ router.beforeEach((to, from, next)=>{ //全局前置守卫
     if(user.roleList.length > 0){
       //添加角色 菜单 权限等信息
       const menuList = formatMenu(user.roleList[0].menus);
-      console.log('menuList', menuList)
       router.addRoutes(menuList);
-      console.log(router);
       store.commit('setMenus', menuList);
+      store.commit('setRoleList', user.roleList);
       store.commit('setPermissions', user.roleList[0].permissions);
     }
   });

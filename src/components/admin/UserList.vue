@@ -11,12 +11,12 @@
             <el-row :gutter="25">
                 <el-col :span="10">
                 <!-- 搜索 & 添加 -->
-                    <el-input placeholder="请输入搜索内容" v-model="queryInfo.query" clearable @clear="getUserList()">
+                    <el-input placeholder="请输入搜索内容" v-hasPermission="['USER_QUERY']" v-model="queryInfo.query" clearable @clear="getUserList()">
                         <el-button slot="append" icon="el-icon-search" @click="searchUserList()" @keyup.native.enter="searchUserList()"></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary" @click="addDialogVisible = true">添加用户</el-button>
+                    <el-button type="primary" v-hasPermission="['USER_ADD']" @click="addDialogVisible = true">添加用户</el-button>
                 </el-col>
             </el-row>
             <!-- 用户列表 border边框 stripe隔行变色-->
@@ -38,11 +38,11 @@
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <!-- 修改 -->
-                        <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.id)"></el-button>
+                        <el-button type="primary" icon="el-icon-edit" size="mini" v-hasPermission="['USER_UPDATE']" @click="showEditDialog(scope.row.id)"></el-button>
                         <!-- 删除 -->
-                        <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteUser(scope.row.id)"></el-button>
+                        <el-button type="danger" icon="el-icon-delete" size="mini" v-hasPermission="['USER_DELETE']" @click="deleteUser(scope.row.id)"></el-button>
                         <!-- 权限 -->
-                        <el-tooltip effect="dark" content="分配权限" placement="top-start" :enterable="false"> <!-- 文字提示 enterable隐藏 -->
+                        <el-tooltip effect="dark" content="分配权限" placement="top-start" v-hasRole="['ROLE_SUPREADMIN']" :enterable="false"> <!-- 文字提示 enterable隐藏 -->
                             <el-button type="warning" icon="el-icon-setting" size="mini" @click="showEditRoleDialog(scope.row.id)"></el-button>
                         </el-tooltip>
                     </template>
@@ -179,9 +179,9 @@ export default {
     methods:{
         async getUserList(){
             // 获取所有用户
-           const {data:res} = await this.$ajax.get("/user/allUser", {params: this.queryInfo})
-           this.userList =  res.data.rows; // 用户列表数据封装
-           this.total = res.data.total; // 总用户数封装
+           const {data:res} = await this.$ajax.get("/user/allUser", {params: this.queryInfo});
+           this.userList =  res.rows; // 用户列表数据封装
+           this.total = res.total; // 总用户数封装
         },
         searchUserList(){
             this.queryInfo.pageStart = 1; 
@@ -204,9 +204,9 @@ export default {
             console.log('返回数据', res);
             if(!res.flag){
                 userInfo.id = !userInfo.id;
-                return this.$message.error("操作失败");
+                return this.$message.error(res.message);
             }
-            this.$message.success("操作成功");
+            this.$message.success(res.message);
         },
         // 监听添加用户
         addDialogClose(){
@@ -291,8 +291,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-breadcrumb{
-    margin-bottom: 15px;
-    font-size: 17px;
-}
+
 </style>

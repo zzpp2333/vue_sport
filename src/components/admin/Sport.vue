@@ -15,8 +15,5 @@ export default {
 </script>
 
 <style lang="less">
-.el-breadcrumb{
-    margin-bottom: 15px;
-    font-size: 17px;
-}
+
 </style>
