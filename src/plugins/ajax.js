@@ -46,6 +46,8 @@ ajax.interceptors.response.use((res) => {
             Message.error(err.response.data.message);
         }else if(err.response.status === 404){
             Message.error('后端接口未找到');
+        }else if(err.response.status === 405){
+            Message.warning('请求方法错误-->需要"' + err.response.headers.allow + '"请求');
         }else if(err.response.status === 500){
             Message.error('后端异常-->' + err.response.data.message);
         }else{

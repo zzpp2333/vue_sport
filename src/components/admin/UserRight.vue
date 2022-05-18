@@ -23,6 +23,13 @@
                 <el-table-column type="index" label="序号"></el-table-column>
                 <el-table-column label="权限名" prop="name"></el-table-column>
                 <el-table-column label="权限标签" prop="permission"></el-table-column>
+                <el-table-column label="状态" prop="state">
+                    <!-- 作用域插槽 -->
+                    <template slot-scope="scope">
+                        <!-- {{scope.row}}为每一行封存的数据 -->
+                        <el-switch v-model="scope.row.state" @change="permissionStateChanged(scope.row)"></el-switch>
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <!-- 修改 -->
@@ -32,11 +39,17 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <!-- 新增权限区域 -->
+            <!-- 新增或编辑权限区域 -->
             <el-dialog :title="title" :visible.sync="dialogVisible" width="50%" @close="dialogClose()">
                 <el-form :model="permissionForm" :rules="permFormRules" ref="permFormRef" label-width="70px">
                     <el-form-item label="权限名" prop="name">
                         <el-input v-model="permissionForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="是否启用" prop="state">
+                        <el-radio-group v-model="permissionForm.state" class="state-class">
+                            <el-radio :label="true">是</el-radio>
+                            <el-radio :label="false">否</el-radio>
+                        </el-radio-group> 
                     </el-form-item>
                     <el-form-item label="权限标签" prop="permission">
                         <el-input v-model="permissionForm.permission" 
@@ -78,11 +91,7 @@ export default {
             total: 0, // 总记录数 初始为0
             dialogVisible: false, // 对话框 隐藏/显示 状态
             // 添加用户的信息
-            permissionForm: {
-                id: '',
-                name: '',
-                permission: '',
-            },
+            permissionForm: {},
             title: "",
             // 添加表单验证
             permFormRules: {
@@ -93,6 +102,9 @@ export default {
                 permission: [
                     { required: true, message: '请输入权限标签, 权限标识只能包含字母或下划线', trigger: 'blur' },
                     { min: 1, max: 20, message: '长度在 1 ~ 20 个字符', trigger: 'blur' }
+                ],
+                state: [
+                    { required: true, message: '请选择状态', trigger: 'blur' },
                 ],
             },
         }
@@ -190,6 +202,16 @@ export default {
             }).catch(() => {
                 // 成功删除为confirm 取消为 cancel
                 return this.$message.info("操作已取消");
+            });
+        },
+        permissionStateChanged(row){
+            this.$ajax.post('/permission/updatePermission', row).then((res) => {
+                console.log('row', row);
+                if (!res.data.flag) {
+                    return this.$message.error(res.data.message);
+                }
+                this.$message.success(res.data.message);
+                this.getPermissionList();
             });
         },
     }
