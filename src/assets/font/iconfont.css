@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3345874 */
-  src: url('iconfont.woff2?t=1650459670157') format('woff2'),
-       url('iconfont.woff?t=1650459670157') format('woff'),
-       url('iconfont.ttf?t=1650459670157') format('truetype');
+  src: url('iconfont.woff2?t=1653058041462') format('woff2'),
+       url('iconfont.woff?t=1653058041462') format('woff'),
+       url('iconfont.ttf?t=1653058041462') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,62 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-qita:before {
+  content: "\e65e";
+}
+
+.icon-lingshi:before {
+  content: "\e660";
+}
+
+.icon-shucai:before {
+  content: "\e63c";
+}
+
+.icon-tiaoweipin:before {
+  content: "\e629";
+}
+
+.icon-yinliao:before {
+  content: "\e61c";
+}
+
+.icon--:before {
+  content: "\e610";
+}
+
+.icon-niunai:before {
+  content: "\e612";
+}
+
+.icon-jianguo:before {
+  content: "\e603";
+}
+
+.icon-zhushi:before {
+  content: "\e69e";
+}
+
+.icon-dadou:before {
+  content: "\e855";
+}
+
+.icon-shuiguo:before {
+  content: "\e810";
+}
+
+.icon-youzhi:before {
+  content: "\e819";
+}
+
+.icon-a-50-62_fuzhi-08:before {
+  content: "\e613";
+}
+
+.icon-a-tiaoliaotiaoweipin:before {
+  content: "\e651";
 }
 
 .icon-liebiao:before {

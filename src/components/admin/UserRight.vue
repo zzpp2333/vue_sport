@@ -91,7 +91,9 @@ export default {
             total: 0, // 总记录数 初始为0
             dialogVisible: false, // 对话框 隐藏/显示 状态
             // 添加用户的信息
-            permissionForm: {},
+            permissionForm: {
+                state: true, // 默认为true(启用状态)
+            },
             title: "",
             // 添加表单验证
             permFormRules: {

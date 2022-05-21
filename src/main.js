@@ -14,8 +14,11 @@ import '@/utils/permission'
 
 // 导入axios 使用axios进行跨域
 import axios from 'axios'
+
+// 七牛云测试域名 30天过期
+Vue.prototype.$qiniu = 'http://rc6rp8gha.hn-bkt.clouddn.com' 
 // 挂载axios
-Vue.prototype.$http = axios 
+//Vue.prototype.$http = axios 
 // Vue.prototype.$ajax = axios
 // 设置后端访问根路径
 // axios.defaults.baseURL = "http://localhost:9000"

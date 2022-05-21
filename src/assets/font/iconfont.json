@@ -6,6 +6,104 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "607733",
+      "name": "其他",
+      "font_class": "qita",
+      "unicode": "e65e",
+      "unicode_decimal": 58974
+    },
+    {
+      "icon_id": "947085",
+      "name": "零食",
+      "font_class": "lingshi",
+      "unicode": "e660",
+      "unicode_decimal": 58976
+    },
+    {
+      "icon_id": "5025784",
+      "name": "蔬菜",
+      "font_class": "shucai",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "5170690",
+      "name": "调味品",
+      "font_class": "tiaoweipin",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "5174964",
+      "name": "饮料",
+      "font_class": "yinliao",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "5182596",
+      "name": "肉食",
+      "font_class": "-",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "5244519",
+      "name": "牛奶",
+      "font_class": "niunai",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "7829266",
+      "name": "坚果",
+      "font_class": "jianguo",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "10268966",
+      "name": "主食",
+      "font_class": "zhushi",
+      "unicode": "e69e",
+      "unicode_decimal": 59038
+    },
+    {
+      "icon_id": "14439528",
+      "name": "大豆",
+      "font_class": "dadou",
+      "unicode": "e855",
+      "unicode_decimal": 59477
+    },
+    {
+      "icon_id": "17605432",
+      "name": "水果",
+      "font_class": "shuiguo",
+      "unicode": "e810",
+      "unicode_decimal": 59408
+    },
+    {
+      "icon_id": "17605499",
+      "name": "油脂",
+      "font_class": "youzhi",
+      "unicode": "e819",
+      "unicode_decimal": 59417
+    },
+    {
+      "icon_id": "27704788",
+      "name": "肉蛋类",
+      "font_class": "a-50-62_fuzhi-08",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "29188326",
+      "name": "调料 调味品",
+      "font_class": "a-tiaoliaotiaoweipin",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
       "icon_id": "1304951",
       "name": "列表",
       "font_class": "liebiao",
