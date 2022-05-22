@@ -28,18 +28,18 @@
             <!-- 食物列表 -->
             <el-table :data="tableList" border stripe>
                 <el-table-column type="index" label="序号"/>
-                <el-table-column label="食物名称" prop="title"/>
+                <el-table-column label="食物名称" prop="name"/>
                 <el-table-column label="食物类别" prop="type"/>
                 <el-table-column label="缩略图" align="center" width="130">
                     <template slot-scope="scope">
                         <!-- preview-src-list: 大图预览 -->
                         <el-image
-                            v-if="scope.row.imageUrls"
+                            v-if="scope.row.imageUrl"
                             style="width: 100px; height: 100px"
-                            :src="$qiniu + scope.row.imageUrls.split(',')[0]"
-                            :preview-src-list="previewImages(scope.row.imageUrls.split(','))"/>
+                            :src="$qiniu + scope.row.imageUrl"
+                            :preview-src-list="previewImages(scope.row.imageUrl)"/>
                         <el-image
-                            v-if="!scope.row.imageUrls"
+                            v-if="!scope.row.imageUrl"
                             style="width: 100px; height: 100px"
                             src=""/>
                     </template>
@@ -80,7 +80,7 @@
             <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :current-page="queryInfo.pageNumber"
+                    :current-page="queryInfo.pageStart"
                     :page-sizes="[5, 10, 20, 50]"
                     :page-size="queryInfo.pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
@@ -91,9 +91,9 @@
                 <el-form :model="dataForm" :rules="rulesDataForm" ref="dataForm" label-width="100px">
                     <el-row>
                         <el-col :span="8">
-                            <el-form-item label="食物名称" prop="title">
+                            <el-form-item label="食物名称" prop="name">
                                 <el-input
-                                    v-model="dataForm.title"
+                                    v-model="dataForm.name"
                                     type="textarea"
                                     autosize/>
                             </el-form-item>
@@ -292,7 +292,7 @@
             return {
                 queryInfo: {
                     queryString: '',
-                    pageNumber: 1,
+                    pageStart: 1,
                     pageSize: 5
                 },
                 //表格数据库
@@ -321,7 +321,7 @@
                 //表格加载
                 loading: false,
                 rulesDataForm: {
-                    title: [
+                    name: [
                         { required: true, message: "请输入菜品分类名称", trigger: "blur" },
                         { min: 1, max: 50, message: "长度在 1 到 50 个字符", trigger: "blur" },
                     ],
@@ -348,10 +348,11 @@
             }
         },
         created() {
-            /** 初始化查询菜品分类 */
+            /** 初始化查询菜品分类 用于新增/编辑菜品 */
             this.$ajax.get('/food/type/all').then((res) => {
-                console.log('typeall', res);
+                console.log('alltype', res);
                 if (!res.data.flag) return this.$message.error(res.data.message);
+                console.log('type/data', res.data.data);
                 this.foodType = res.data.data;
             });
         },
@@ -368,8 +369,8 @@
                 this.queryInfo.pageSize = newPageSize;
                 this.findPage();
             },
-            handleCurrentChange(newPageNumber) {
-                this.queryInfo.pageNumber = newPageNumber;
+            handleCurrentChange(newPageStart) {
+                this.queryInfo.pageStart = newPageStart;
                 this.findPage();
             },
             addShow() {
@@ -383,13 +384,16 @@
                 this.dataForm = {};
                 this.fileNames = [];
                 this.fileList = [];
-                if (row.imageUrls) {
-                    let urls = row.imageUrls.split(',');
-                    urls.forEach(item => {
-                        let url = {url: this.$qiniu + item};
-                        this.fileList.push(url);
-                        this.fileNames.push(item);
-                    });
+                if (row.imageUrl) {
+                    let url = {url: this.$qiniu + row.imageUrl};
+                    this.fileList.push(url);
+                    this.fileNames.push(row.imageUrl);
+                    // let urls = row.imageUrls.split(',');
+                    // urls.forEach(item => {
+                    //     let url = {url: this.$qiniu + item};
+                    //     this.fileList.push(url);
+                    //     this.fileNames.push(item);
+                    // });
                 }
                 this.title = '修改';
                 this.dataForm = row;
@@ -465,7 +469,7 @@
                     if (!valid) return this.$message.error('表单校验不通过，请认真填写后提交！');
                     //校验通过验证图片是否上传
                     if (this.fileNames.length < 1) return this.$message.error('请上传食物图片, 至少一张, 至多4张!');
-                    this.dataForm.imageUrls = this.fileNames.join(',');
+                    this.dataForm.imageUrl = this.fileNames.join(',');
                     this.loading = true;
                     //判断是修改还是添加
                     if (this.dataForm.id === null || this.dataForm.id === undefined) {
@@ -522,14 +526,20 @@
                 this.$message.success(res.message);
                 this.findPage();
             },
-            //预览图片列表
-            previewImages(list) {
+            //预览图片(单张)
+            previewImages(item) {
                 let arr = [];
-                list.forEach(item => {
-                   arr.push(this.$qiniu + item);
-                });
+                arr.push(this.$qiniu + item);
                 return arr;
             }
+            //预览图片列表
+            // previewImages(list) {
+            //     let arr = [];
+            //     list.forEach(item => {
+            //        arr.push(this.$qiniu + item);
+            //     });
+            //     return arr;
+            // }
         }
     }
 </script>

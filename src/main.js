@@ -16,7 +16,7 @@ import '@/utils/permission'
 import axios from 'axios'
 
 // 七牛云测试域名 30天过期
-Vue.prototype.$qiniu = 'http://rc6rp8gha.hn-bkt.clouddn.com' 
+Vue.prototype.$qiniu = 'http://rc6rp8gha.hn-bkt.clouddn.com/' 
 // 挂载axios
 //Vue.prototype.$http = axios 
 // Vue.prototype.$ajax = axios

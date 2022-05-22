@@ -29,7 +29,7 @@
             <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :current-page="queryInfo.pageNumber"
+                    :current-page="queryInfo.pageStart"
                     :page-sizes="[5, 10, 20, 50]"
                     :page-size="queryInfo.pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
@@ -73,7 +73,7 @@
             return {
                 queryInfo: {
                     queryString: '',
-                    pageNumber: 1,
+                    pageStart: 1,
                     pageSize: 5
                 },
                 //表格数据库
@@ -114,8 +114,9 @@
                 this.queryInfo.pageSize = newPageSize;
                 this.findPage();
             },
-            handleCurrentChange(newPageNumber) {
-                this.queryInfo.pageNumber = newPageNumber;
+            handleCurrentChange(newPageStart) {
+                this.queryInfo.pageStart = newPageStart;
+                console.log('queryInfo', this.queryInfo);
                 this.findPage();
             },
             addShow() {
