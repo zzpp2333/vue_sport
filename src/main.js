@@ -5,6 +5,8 @@ import router from './router'
 import store from '@/store'
 import './plugins/element.js'
 import './plugins/ajax.js'
+import './plugins/markdown.js'
+import './plugins/ highlight.js'
 // 添加全局样式
 import './assets/css/global.css'
 // 引入iconfont

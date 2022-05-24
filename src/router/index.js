@@ -38,7 +38,9 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: "history",  // 没有#
+  // mode: "history",  
+  // 没有# 但history模式下,只是动态的通过js操作window.history来改变浏览器地址栏里的路径,并没有发起http请求
+  // 因此刷新页面会404
   routes
 })
 
