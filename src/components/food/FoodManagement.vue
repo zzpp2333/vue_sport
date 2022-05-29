@@ -4,7 +4,7 @@
             <el-row :gutter="25">
                 <el-col :span="10">
                     <!-- 搜索添加 -->
-                    <el-input placeholder="请输入搜索内容" v-model="queryInfo.queryString" clearable @clear="findPage">
+                    <el-input placeholder="请输入搜索内容" v-model="queryInfo.query" clearable @clear="findPage">
                         <el-button slot="append" icon="el-icon-search" @click="findPage"/>
                     </el-input>
                 </el-col>
@@ -291,7 +291,7 @@
         data() {
             return {
                 queryInfo: {
-                    queryString: '',
+                    query: '',
                     pageStart: 1,
                     pageSize: 5
                 },

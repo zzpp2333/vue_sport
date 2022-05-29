@@ -14,7 +14,7 @@
             <!-- 侧边栏 -->
             <el-aside :width="isCollapse?'64px':'200px'">
                 <!-- 伸缩按钮 -->
-                <div class="toggle-button" @click="toggleCollapse">|||</div>
+                <div class="toggle-button" @click="toggleCollapse"><i class="el-icon-s-fold"/></div>
                 <!-- 侧边栏 只保持一个菜单展开 -->
                 <el-menu background-color="#545c64" text-color="#fff" active-text-color="#409eff"
                 unique-opened :collapse="isCollapse" :collapse-transition="false" :router="true"

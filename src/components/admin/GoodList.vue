@@ -147,7 +147,7 @@ export default {
                 goodName: '',
                 price: 0,
                 inStock: 0,
-                createUserId: sessionStorage.getItem('id'),
+                createUserId: '',
                 imgUrl: '',
                 modelType: '',
                 controlModel: '',
@@ -248,6 +248,7 @@ export default {
                 if(!valid){
                     return this.$message.error("请输入有效信息");
                 }
+                this.goodForm.createUserId = this.id;
                 const {data:res} = await this.$ajax.post("/goods/addGoods", this.goodForm);
                 if(!res.flag){
                     return this.$message.error(res.message);

@@ -33,6 +33,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="运动" prop="name"></el-table-column>
+                <el-table-column label="创建者" prop="creatorId"></el-table-column>
                 <el-table-column label="适合年龄" prop="applicableAge"></el-table-column>
                 <el-table-column label="锻炼部位" prop="beneficialPosition"></el-table-column>
                 <!-- <el-table-column label="介绍" prop="introduction"></el-table-column> -->
@@ -57,6 +58,12 @@
                         <el-col :span="12">
                             <el-form-item label="适合年龄" prop="applicableAge">
                                 <el-input v-model="dataForm.applicableAge"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col>
+                            <!-- 新增是creatorId为当前登录用户的id 不可更改 -->
+                            <el-form-item label="创建者" prop="creatorId">
+                                <el-input v-model="dataForm.creatorId" disabled></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -187,6 +194,7 @@ export default {
         showAddDialog(){
             this.title = '新增运动信息';
             this.dataForm = {};
+            this.dataForm.creatorId = sessionStorage.getItem('id');
             this.dialogVisible = true;
         },
         showEditDialog(row){
